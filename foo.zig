@@ -29,24 +29,17 @@ fn fcvtns(x: f32x8) i32x8 {
     return @shuffle(i32, low_i, high_i, [8]i32{ 0, 1, 2, 3, -1, -2, -3, -4 });
 }
 
-fn fcvtns2(x: f32x8) i32x8 {
-    return asm ("fcvtns %[result].4s, %[x].4s"
-        : [result] "=w" (-> i32x4),
-        : [x] "w" (x),
-    );
-}
-
 fn intFromFloatRound(x: f32x8) i32x8 {
     return switch (@import("builtin").cpu.arch) {
         .x86_64 => vcvtps2dq(x),
-        .aarch64 => fcvtns2(x),
+        .aarch64 => fcvtns(x),
         // else => @intFromFloat(@round(x)),
         else => unreachable,
     };
 }
 
 pub fn main() void {
-    const input: f32x8 = [_]f32{ 1.5, 2.5, 3.5, 4.0, 5.9, -6.1, 7.4, -8.8 };
+    const input: f32x8 = [_]f32{ 1.5, 2.5, 3.5, 4.5, 5.9, -6.5, -7.5, -8.8 };
     const result: i32x8 = intFromFloatRound(input);
     std.debug.print("input: {}\n", .{input});
     std.debug.print("Result: {}\n", .{result});
