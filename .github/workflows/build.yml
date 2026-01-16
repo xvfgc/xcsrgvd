@@ -12,6 +12,9 @@ jobs:
       - name: Print Hello World
         run: 'echo "Hello World"'
 
+      - name: Checkout code
+        uses: actions/checkout@v4 
+
       - uses: mlugg/setup-zig@v2
         with:
           version: 0.15.2
@@ -19,8 +22,5 @@ jobs:
 
       - name: Run test
         run: |
-         ls
-         pwd
-         cd ..
          ls
          zig run ./foo.zig
