@@ -14,8 +14,8 @@ fn vcvtps2dq(x: f32x8) i32x8 {
 }
 
 fn fcvtns(x: f32x8) i32x8 {
-    const low: f32x4 = x[0..4].*;
-    const high: f32x4 = x[4..8].*;
+    const low: f32x4 = @shuffle(f32, x, undefined, [4]i32{ 0, 1, 2, 3 });
+    const high: f32x4 = @shuffle(f32, x, undefined, [4]i32{ 4, 5, 6, 7 });
 
     const low_i: i32x4 = asm ("fcvtns %[result].4s, %[x].4s"
         : [result] "=w" (-> i32x4),
@@ -26,7 +26,7 @@ fn fcvtns(x: f32x8) i32x8 {
         : [x] "w" (high),
     );
 
-    return low_i ++ high_i;
+    return @shuffle(i32, low_i, high_i, [8]i32{ 0, 1, 2, 3, -1, -2, -3, -4 });
 }
 
 fn intFromFloatRound(x: f32x8) i32x8 {
